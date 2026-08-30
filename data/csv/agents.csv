@@ -1,0 +1,9 @@
+agent_id,agent_name,branch,city,state,agent_type
+AG001,Manoj Gupta,Andheri,Mumbai,Maharashtra,Employee
+AG002,Rina Shah,Satellite,Ahmedabad,Gujarat,Partner
+AG003,Deepak Rao,Whitefield,Bengaluru,Karnataka,Employee
+AG004,Pooja Malhotra,Connaught Place,Delhi,Delhi,Partner
+AG005,Kiran Reddy,Banjara Hills,Hyderabad,Telangana,Employee
+AG006,Arvind Kumar,T Nagar,Chennai,Tamil Nadu,Employee
+AG007,Sunil Jain,Vaishali Nagar,Jaipur,Rajasthan,Partner
+AG008,Soumya Roy,Salt Lake,Kolkata,West Bengal,Employee

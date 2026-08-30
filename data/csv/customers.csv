@@ -1,0 +1,13 @@
+customer_id,first_name,last_name,date_of_birth,gender,city,state,email,phone
+CUST001,Rajesh,Sharma,1985-04-12,Mumbai,Maharashtra,rajesh.sharma@email.com,9876543210
+CUST002,Priya,Patel,1990-08-25,Female,Ahmedabad,Gujarat,priya.patel@email.com,9876543211
+CUST003,Amit,Kumar,1978-11-03,Male,Bengaluru,Karnataka,amit.kumar@email.com,9876543212
+CUST004,Neha,Verma,1995-02-17,Female,Delhi,Delhi,neha.verma@email.com,9876543213
+CUST005,Arjun,Reddy,1982-06-29,Male,Hyderabad,Telangana,arjun.reddy@email.com,9876543214
+CUST006,Sneha,Iyer,1988-09-14,Female,Chennai,Tamil Nadu,sneha.iyer@email.com,9876543215
+CUST007,Vikram,Singh,1975-12-20,Male,Jaipur,Rajasthan,vikram.singh@email.com,9876543216
+CUST008,Ananya,Das,1992-03-08,Female,Kolkata,West Bengal,ananya.das@email.com,9876543217
+CUST009,Rohit,Mehta,1986-07-19,Male,Pune,Maharashtra,rohit.mehta@email.com,9876543218
+CUST010,Kavya,Nair,1993-10-11,Female,Kochi,Kerala,kavya.nair@email.com,9876543219
+CUST011,Suresh,Rao,1980-01-30,Male,Bengaluru,Karnataka,suresh.rao@email.com,9876543220
+CUST012,Meera,Joshi,1991-05-22,Female,Delhi,Delhi,meera.joshi@email.com,9876543221
