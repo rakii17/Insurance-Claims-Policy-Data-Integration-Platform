@@ -1,5 +1,6 @@
 import requests
 import pandas as pd
+from validation import validate_weather_data
 
 api_url = "https://api.open-meteo.com/v1/forecast"
 
@@ -20,5 +21,7 @@ def extract_api_data(api_url, params):
 
 weather_data = extract_api_data(api_url, params)    #store returned JSON object into weather_data
 df = pd.DataFrame(weather_data)                     #convert JSON into Dataframe(rows&columns)
-# print(df.to_string(index=False))                    #convert to string and not printing index row numbers
-print(df)
+# print(df.to_string(index=False))                  #convert to string and not printing index row numbers
+print(df.columns)
+
+validate_weather_data(df)
