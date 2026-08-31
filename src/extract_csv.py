@@ -1,11 +1,22 @@
 import pandas as pd
+from pathlib import Path
 
-agents_df = pd.read_csv("data/raw/csv/agents.csv")
+raw_csv_path = Path("data/raw/csv")
+csv_files = raw_csv_path.glob("*.csv")
 
+csv_data = {}
 
-print(agents_df.head())
-print(agents_df.shape)
-print(agents_df.columns)
-print(agents_df.dtypes)
-print(agents_df.isnull().sum())
-print(agents_df.duplicated().sum())
+for file in csv_files:
+    df = pd.read_csv(file)
+    csv_data[file.stem] = df
+    
+    print(f"\n===== {file.name} =====")
+    print(df.head())
+    print(df.shape)
+    print(df.columns)
+    print(df.dtypes)
+    print(df.isnull().sum())
+    print(df.duplicated().sum())
+    
+print(csv_data.keys()) 
+
