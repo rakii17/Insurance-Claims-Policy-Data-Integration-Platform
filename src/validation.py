@@ -25,6 +25,3 @@ def validate_weather_data(df):
 for name, df in csv_data.items():
     print(f"\n{name.upper()}")
     print(df.columns.tolist())
-    
-    
-
