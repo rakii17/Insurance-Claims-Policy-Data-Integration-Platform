@@ -19,3 +19,6 @@ def validate_weather_data(df):
         raise ValueError("Invalid temperature values found")
     if (df["precipitation"] < 0).any():
         raise ValueError("Invalid precipitation values found")
+    
+    
+
