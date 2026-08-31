@@ -1,16 +1,21 @@
 def validate_weather_data(df):
-    print(df.empty)                                                 #validate whether DataFrame is empty
+    if df.empty:
+        raise ValueError("Weather DataFrame is empty")              
     
-    expected_columns = ["time", "temperature_2m", "precipitation"]  #validate for expected columns
-    missing_columns = set(expected_columns) - set(df.columns)       #validate for missing columns
-    print(missing_columns)
+    expected_columns = ["time", "temperature_2m", "precipitation"] 
+    missing_columns = set(expected_columns) - set(df.columns)     
+    if missing_columns:
+        raise ValueError(f"Missing columns: {missing_columns}")
     
-    print(df.isnull().sum())                                        #validate for missing values and total number of missing values
+    null_counts = df.isnull().sum()
+    if null_counts.any():
+        raise ValueError(f"Missing values found: {null_counts[null_counts > 0]}")
     
-    print(df.duplicated().sum())                                    #validate for duplicate values
-    
-    print(df.dtypes)                                                #validate for datatypes
-    
-    print(df["temperature_2m"].min())                   
-    print(df["temperature_2m"].max())
-    print(df["precipitation"].min())
+    duplicate_count = df["time"].duplicated().sum()
+    if duplicate_count > 0: 
+        raise ValueError(f"Duplicate timestamps found: {duplicate_count}")
+        
+    if not df["temperature_2m"].between(-90, 60).all():
+        raise ValueError("Invalid temperature values found")
+    if (df["precipitation"] < 0).any():
+        raise ValueError("Invalid precipitation values found")
