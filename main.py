@@ -3,6 +3,7 @@ from src.load import get_db_connection, load_to_sqlite
 from src.extract_csv import csv_data
 from src.extract_excel import excel_data
 from src.extract_database import (policy_transactions_df, premium_transactions_df, claim_transactions_df)
+from src.extract_api import df as weather_df
 
 #csv connections
 conn = get_db_connection()
@@ -65,6 +66,15 @@ load_to_sqlite(
 load_to_sqlite(
     claim_transactions_df,
     "claim_transactions",
+    conn
+)
+conn.close()
+
+#api connections
+conn = get_db_connection()
+load_to_sqlite(
+    weather_df,
+    "weather",
     conn
 )
 conn.close()

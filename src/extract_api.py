@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
-from validation import validate_weather_data
-from transformation import transform_weather_data
+from .validation import validate_weather_data
+from .transformation import transform_weather_data
 
 api_url = "https://api.open-meteo.com/v1/forecast"
 
