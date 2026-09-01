@@ -23,7 +23,6 @@ print(tables)
 conn.close()
 
 conn = get_db_connection()
-
 tables = pd.read_sql(
     "SELECT name FROM sqlite_master WHERE type='table';",
     conn
@@ -35,7 +34,6 @@ for table in tables["name"]:
         conn
     )
     print(f"{table}: {count.iloc[0]['row_count']} rows")
-
 conn.close()
 
 branches_df = excel_data["branches"]
