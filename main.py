@@ -1,12 +1,13 @@
 import pandas as pd
 from src.load import get_db_connection, load_to_sqlite
-from src.extract_csv import csv_data
-from src.extract_excel import excel_data
-from src.extract_database import (policy_transactions_df, premium_transactions_df, claim_transactions_df)
-from src.extract_api import df as weather_df
+from src.extract_csv import extract_csv_data
+from src.extract_excel import extract_excel_data
+from src.extract_database import extract_database_data
+from src.extract_api import get_weather_data
 
 #csv connections
 conn = get_db_connection()
+csv_data = extract_csv_data()
 for table_name, df in csv_data.items():
     load_to_sqlite(df, table_name, conn)
 conn.close()
@@ -35,6 +36,7 @@ for table in tables["name"]:
 conn.close()
 
 #excel connections
+excel_data = extract_excel_data()
 branches_df = excel_data["branches"]
 
 conn = get_db_connection()
@@ -53,6 +55,8 @@ print(branches_df.shape)
 
 #source_system.db conenctions
 conn = get_db_connection()
+(policy_transactions_df, premium_transactions_df, claim_transactions_df) = extract_database_data()
+
 load_to_sqlite(
     policy_transactions_df,
     "policy_transactions",
@@ -72,6 +76,8 @@ conn.close()
 
 #api connections
 conn = get_db_connection()
+weather_df = get_weather_data()
+
 load_to_sqlite(
     weather_df,
     "weather",

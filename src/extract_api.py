@@ -20,12 +20,14 @@ def extract_api_data(api_url, params):
     api_data = response.json()                      #converts API response into Python object
     return api_data["hourly"]
 
-weather_data = extract_api_data(api_url, params)    #store returned JSON object into weather_data
-df = pd.DataFrame(weather_data)                     #convert JSON into Dataframe(rows&columns)
-# print(df.to_string(index=False))                  #convert to string and exclude index row numbers
-print(df.columns)
+def get_weather_data():
 
-validate_weather_data(df)
+    weather_data = extract_api_data(api_url, params)
+    df = pd.DataFrame(weather_data)
+    print(df.columns)
 
-df = transform_weather_data(df)
-print(df.dtypes)
+    validate_weather_data(df)
+    df = transform_weather_data(df)
+    print(df.dtypes)
+
+    return df

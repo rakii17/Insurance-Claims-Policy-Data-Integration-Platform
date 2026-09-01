@@ -1,5 +1,3 @@
-from .extract_csv import csv_data
-
 def validate_weather_data(df):
     if df.empty:
         raise ValueError("Weather DataFrame is empty")              
@@ -21,7 +19,3 @@ def validate_weather_data(df):
         raise ValueError("Invalid temperature values found")
     if (df["precipitation"] < 0).any():
         raise ValueError("Invalid precipitation values found")
-    
-for name, df in csv_data.items():
-    print(f"\n{name.upper()}")
-    print(df.columns.tolist())
