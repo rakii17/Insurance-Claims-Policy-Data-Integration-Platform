@@ -5,82 +5,41 @@ from src.extract_excel import extract_excel_data
 from src.extract_database import extract_database_data
 from src.extract_api import get_weather_data
 
-#csv connections
-conn = get_db_connection()
+#extract
 csv_data = extract_csv_data()
-for table_name, df in csv_data.items():
+excel_data = extract_excel_data()
+database_data = extract_database_data()
+weather_df = get_weather_data()
+
+#combine
+datasets = {}
+
+datasets.update(csv_data)
+datasets.update(excel_data)
+datasets.update(database_data)
+datasets["weather"] = weather_df
+
+#load
+conn = get_db_connection()
+for table_name, df in datasets.items():
     load_to_sqlite(df, table_name, conn)
 conn.close()
 
-#target.db connections
+#verify
 conn = get_db_connection()
 tables = pd.read_sql(
     "SELECT name FROM sqlite_master WHERE type='table';",
     conn
 )
+print("\n===== TABLES =====")
 print(tables)
-conn.close()
-
-conn = get_db_connection()
-tables = pd.read_sql(
-    "SELECT name FROM sqlite_master WHERE type='table';",
-    conn
-)
 
 for table in tables["name"]:
+
     count = pd.read_sql(
         f"SELECT COUNT(*) AS row_count FROM {table};",
         conn
     )
+
     print(f"{table}: {count.iloc[0]['row_count']} rows")
-conn.close()
-
-#excel connections
-excel_data = extract_excel_data()
-branches_df = excel_data["branches"]
-
-conn = get_db_connection()
-load_to_sqlite(branches_df, "branches", conn)
-conn.close()
-print(branches_df.head())
-
-conn = get_db_connection()
-count = pd.read_sql(
-    "SELECT COUNT(*) AS row_count FROM branches;",
-    conn
-)
-print(f"branches: {count.iloc[0]['row_count']} rows")
-conn.close()
-print(branches_df.shape)
-
-#source_system.db conenctions
-conn = get_db_connection()
-(policy_transactions_df, premium_transactions_df, claim_transactions_df) = extract_database_data()
-
-load_to_sqlite(
-    policy_transactions_df,
-    "policy_transactions",
-    conn
-)
-load_to_sqlite(
-    premium_transactions_df,
-    "premium_transactions",
-    conn
-)
-load_to_sqlite(
-    claim_transactions_df,
-    "claim_transactions",
-    conn
-)
-conn.close()
-
-#api connections
-conn = get_db_connection()
-weather_df = get_weather_data()
-
-load_to_sqlite(
-    weather_df,
-    "weather",
-    conn
-)
 conn.close()

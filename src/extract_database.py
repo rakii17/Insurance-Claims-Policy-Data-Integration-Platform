@@ -13,8 +13,8 @@ def extract_database_data():
 
     conn.close()
 
-    return (
-        policy_transactions_df,
-        premium_transactions_df,
-        claim_transactions_df
-    )
+    return {
+        "policy_transactions": policy_transactions_df,
+        "premium_transactions": premium_transactions_df,
+        "claim_transactions": claim_transactions_df
+    }
