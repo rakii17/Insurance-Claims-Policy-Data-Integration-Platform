@@ -10,7 +10,7 @@ def extract_database_data():
     policy_transactions_df = pd.read_sql("SELECT * FROM policy_transactions;", conn)
     premium_transactions_df = pd.read_sql("SELECT * FROM premium_transactions;", conn)
     claim_transactions_df = pd.read_sql("SELECT * FROM claim_transactions;", conn)
-
+    
     conn.close()
 
     return {
