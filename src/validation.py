@@ -67,3 +67,16 @@ def validate_data_types(df, dataset_name, expected_types):
             )
 
     return True
+
+def validate_date_column(df, dataset_name, column):
+    if df[column].isnull().any():
+        raise ValueError(
+            f"{dataset_name} contains invalid dates in '{column}'"
+        )
+
+    if not pd.api.types.is_datetime64_any_dtype(df[column]):
+        raise ValueError(
+            f"{dataset_name} column '{column}' is not a datetime type"
+        )
+
+    return True

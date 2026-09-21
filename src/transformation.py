@@ -13,3 +13,13 @@ def transform_claim_data(df):
     )
 
     return df
+
+def transform_payment_data(df):
+    df = df.copy()
+
+    df["payment_date"] = pd.to_datetime(
+        df["payment_date"],
+        errors="coerce"
+    )
+
+    return df

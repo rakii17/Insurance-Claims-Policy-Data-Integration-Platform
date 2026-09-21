@@ -4,8 +4,9 @@ from src.extract_csv import extract_csv_data
 from src.extract_excel import extract_excel_data
 from src.extract_database import extract_database_data
 from src.extract_api import get_weather_data
-from src.validation import validate_dataframe
-from src.validation import validate_dataframe, validate_data_types
+from src.transformation import transform_claim_data
+from src.validation import validate_dataframe, validate_data_types, validate_date_column
+from src.transformation import transform_claim_data, transform_payment_data
 
 #extract
 csv_data = extract_csv_data()
@@ -78,11 +79,16 @@ expected_types = {
 
 #combine
 datasets = {}
-
 datasets.update(csv_data)
 datasets.update(excel_data)
 datasets.update(database_data)
 datasets["weather"] = weather_df
+datasets["claims"] = transform_claim_data(datasets["claims"])
+print("\n===== Transformed Claims Dtypes =====")
+print(datasets["claims"].dtypes)
+datasets["payments"] = transform_payment_data(datasets["payments"])
+print("\n===== Transformed Payments Dtypes =====")
+print(datasets["payments"].dtypes)
 
 for table_name, df in datasets.items():
     if table_name == "weather":
@@ -99,6 +105,18 @@ for table_name, df in datasets.items():
         table_name,
         expected_types[table_name]
     )
+    if table_name == "claims":
+        validate_date_column(
+            df,
+            table_name,
+            "claim_date"
+        )
+    if table_name == "payments":
+        validate_date_column(
+            df,
+            table_name,
+            "payment_date"
+        )
 
 #load
 conn = get_db_connection()
