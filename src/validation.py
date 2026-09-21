@@ -80,3 +80,49 @@ def validate_date_column(df, dataset_name, column):
         )
 
     return True
+
+def validate_policy_business_rules(df):
+
+    if (df["premium_amount"] <= 0).any():
+        raise ValueError(
+            "Policies contain invalid premium amounts"
+        )
+
+    if (df["sum_insured"] <= 0).any():
+        raise ValueError(
+            "Policies contain invalid sum insured values"
+        )
+
+    if (df["policy_end_date"] < df["policy_start_date"]).any():
+        raise ValueError(
+            "Policies contain end dates earlier than start dates"
+        )
+
+    return True
+
+def validate_claim_business_rules(df):
+
+    if (df["claim_amount"] <= 0).any():
+        raise ValueError(
+            "Claims contain invalid claim amounts"
+        )
+
+    return True
+
+def validate_payment_business_rules(df):
+
+    if (df["payment_amount"] <= 0).any():
+        raise ValueError(
+            "Payments contain invalid payment amounts"
+        )
+
+    return True
+
+def validate_policy_transaction_business_rules(df):
+
+    if (df["premium_amount"] <= 0).any():
+        raise ValueError(
+            "Policy transactions contain invalid premium amounts"
+        )
+
+    return True

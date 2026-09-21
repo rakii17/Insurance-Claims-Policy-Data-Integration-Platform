@@ -4,8 +4,8 @@ from src.extract_csv import extract_csv_data
 from src.extract_excel import extract_excel_data
 from src.extract_database import extract_database_data
 from src.extract_api import get_weather_data
-from src.transformation import transform_claim_data
-from src.validation import validate_dataframe, validate_data_types, validate_date_column
+from src.validation import (validate_dataframe, validate_data_types, validate_date_column, 
+validate_policy_business_rules, validate_claim_business_rules, validate_payment_business_rules, validate_policy_transaction_business_rules)
 from src.transformation import (transform_claim_data, transform_payment_data, transform_policy_data, transform_customer_data)
 
 #extract
@@ -89,6 +89,17 @@ datasets["policies"] = transform_policy_data(datasets["policies"])
 datasets["customers"] = transform_customer_data(datasets["customers"])
 print("\n===== Transformed Customers Dtypes =====")
 print(datasets["customers"].dtypes)
+print("\n===== Policy Transactions =====")
+print(datasets["policy_transactions"].columns)
+print(datasets["policy_transactions"].head())
+
+print("\n===== Premium Transactions =====")
+print(datasets["premium_transactions"].columns)
+print(datasets["premium_transactions"].head())
+
+print("\n===== Claim Transactions =====")
+print(datasets["claim_transactions"].columns)
+print(datasets["claim_transactions"].head())
 
 for table_name, df in datasets.items():
     if table_name == "weather":
@@ -111,12 +122,16 @@ for table_name, df in datasets.items():
             table_name,
             "claim_date"
         )
+        validate_claim_business_rules(df)
+        
     if table_name == "payments":
         validate_date_column(
             df,
             table_name,
             "payment_date"
         )
+        validate_payment_business_rules(df)
+        
     if table_name == "policies":
         validate_date_column(
             df,
@@ -129,6 +144,8 @@ for table_name, df in datasets.items():
             table_name,
             "policy_end_date"
         )
+        validate_policy_business_rules(df)
+        
     if table_name == "customers":
         validate_date_column(
             df,
@@ -141,7 +158,10 @@ for table_name, df in datasets.items():
             table_name,
          "opening_date"
         )  
-    
+    if table_name == "policy_transactions":
+        print("\n===== Invalid Policy Transactions =====")
+        print(df[df["premium_amount"] <= 0])
+        validate_policy_transaction_business_rules(df)
 
 #load
 conn = get_db_connection()
