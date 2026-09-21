@@ -1,5 +1,5 @@
 customer_id,first_name,last_name,date_of_birth,gender,city,state,email,phone
-CUST001,Rajesh,Sharma,1985-04-12,Mumbai,Maharashtra,rajesh.sharma@email.com,9876543210
+CUST001,Rajesh,Sharma,1985-04-12,Male,Mumbai,Maharashtra,rajesh.sharma@email.com,9876543210
 CUST002,Priya,Patel,1990-08-25,Female,Ahmedabad,Gujarat,priya.patel@email.com,9876543211
 CUST003,Amit,Kumar,1978-11-03,Male,Bengaluru,Karnataka,amit.kumar@email.com,9876543212
 CUST004,Neha,Verma,1995-02-17,Female,Delhi,Delhi,neha.verma@email.com,9876543213

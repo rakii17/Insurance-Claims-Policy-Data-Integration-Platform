@@ -2,13 +2,13 @@ import pandas as pd
 from pathlib import Path
 
 raw_csv_path = Path("data/raw/csv")
-csv_files = raw_csv_path.glob("*.csv")
 
 def extract_csv_data():
     csv_data = {}
+    csv_files = raw_csv_path.glob("*.csv")
 
     for file in csv_files:
-        df = pd.read_csv(file)
+        df = pd.read_csv(file, dtype={"phone": "string"})
         csv_data[file.stem] = df
         
         print(f"\n===== {file.name} =====")
