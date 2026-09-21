@@ -15,7 +15,7 @@ weather_df = get_weather_data()
 #required columns for validate
 required_columns = {
     "agents": ["agent_id"],
-    "claims": ["policy_id", "customer_id"],
+    "claims": ["claim_id", "policy_id", "customer_id"],
     "customers": ["customer_id", "first_name", "last_name"],
     "payments": ["payment_id", "policy_id", "customer_id"],
     "policies": ["policy_id", "customer_id"],
