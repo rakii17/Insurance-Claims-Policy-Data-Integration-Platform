@@ -126,3 +126,19 @@ def validate_policy_transaction_business_rules(df):
         )
 
     return True
+
+def validate_premium_transaction_business_rules(df):
+    if (df["payment_amount"] <= 0).any():
+        raise ValueError(
+            "Premium transactions contain invalid payment amounts"
+        )
+
+    return True
+
+def validate_claim_transaction_business_rules(df):
+    if (df["claim_amount"] <= 0).any():
+        raise ValueError(
+            "Claim transactions contain invalid claim amounts"
+        )
+
+    return True

@@ -4,8 +4,9 @@ from src.extract_csv import extract_csv_data
 from src.extract_excel import extract_excel_data
 from src.extract_database import extract_database_data
 from src.extract_api import get_weather_data
-from src.validation import (validate_dataframe, validate_data_types, validate_date_column, 
-validate_policy_business_rules, validate_claim_business_rules, validate_payment_business_rules, validate_policy_transaction_business_rules)
+from src.validation import (validate_weather_data, validate_dataframe, validate_data_types, validate_date_column, 
+validate_policy_business_rules, validate_claim_business_rules, validate_payment_business_rules, validate_policy_transaction_business_rules,
+validate_premium_transaction_business_rules, validate_claim_transaction_business_rules)
 from src.transformation import (transform_claim_data, transform_payment_data, transform_policy_data, transform_customer_data)
 
 #extract
@@ -103,6 +104,7 @@ print(datasets["claim_transactions"].head())
 
 for table_name, df in datasets.items():
     if table_name == "weather":
+        validate_weather_data(df)
         continue
 
     validate_dataframe(
@@ -159,9 +161,15 @@ for table_name, df in datasets.items():
          "opening_date"
         )  
     if table_name == "policy_transactions":
-        print("\n===== Invalid Policy Transactions =====")
-        print(df[df["premium_amount"] <= 0])
         validate_policy_transaction_business_rules(df)
+
+    if table_name == "premium_transactions":
+        validate_premium_transaction_business_rules(df)
+
+    if table_name == "claim_transactions":
+        print("\n===== Invalid Claim Transactions =====")
+        print(df[df["claim_amount"] <= 0])
+        validate_claim_transaction_business_rules(df)
 
 #load
 conn = get_db_connection()
