@@ -8,12 +8,17 @@ from src.validation import (validate_weather_data, validate_dataframe, validate_
 validate_policy_business_rules, validate_claim_business_rules, validate_payment_business_rules, validate_policy_transaction_business_rules,
 validate_premium_transaction_business_rules, validate_claim_transaction_business_rules)
 from src.transformation import (transform_claim_data, transform_payment_data, transform_policy_data, transform_customer_data)
+from src.logger import logger
+
+logger.info("ETL Pipeline Started")
 
 #extract
 csv_data = extract_csv_data()
 excel_data = extract_excel_data()
 database_data = extract_database_data()
 weather_df = get_weather_data()
+
+logger.info("Data extraction completed successfully")
 
 #required columns for validate
 required_columns = {
@@ -88,6 +93,7 @@ datasets["claims"] = transform_claim_data(datasets["claims"])
 datasets["payments"] = transform_payment_data(datasets["payments"])
 datasets["policies"] = transform_policy_data(datasets["policies"])
 datasets["customers"] = transform_customer_data(datasets["customers"])
+
 print("\n===== Transformed Customers Dtypes =====")
 print(datasets["customers"].dtypes)
 print("\n===== Policy Transactions =====")
@@ -101,6 +107,8 @@ print(datasets["premium_transactions"].head())
 print("\n===== Claim Transactions =====")
 print(datasets["claim_transactions"].columns)
 print(datasets["claim_transactions"].head())
+
+logger.info("Data transformation completed successfully")
 
 for table_name, df in datasets.items():
     if table_name == "weather":
@@ -167,9 +175,9 @@ for table_name, df in datasets.items():
         validate_premium_transaction_business_rules(df)
 
     if table_name == "claim_transactions":
-        print("\n===== Invalid Claim Transactions =====")
-        print(df[df["claim_amount"] <= 0])
         validate_claim_transaction_business_rules(df)
+
+logger.info("Data validation completed successfully")
 
 #load
 conn = get_db_connection()
@@ -185,6 +193,8 @@ except Exception as e:
 
 finally:
     conn.close()
+
+logger.info("Data loaded into SQLite successfully")
 
 #verify
 conn = get_db_connection()
