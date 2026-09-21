@@ -6,7 +6,7 @@ from src.extract_database import extract_database_data
 from src.extract_api import get_weather_data
 from src.transformation import transform_claim_data
 from src.validation import validate_dataframe, validate_data_types, validate_date_column
-from src.transformation import transform_claim_data, transform_payment_data
+from src.transformation import (transform_claim_data, transform_payment_data, transform_policy_data, transform_customer_data)
 
 #extract
 csv_data = extract_csv_data()
@@ -84,11 +84,11 @@ datasets.update(excel_data)
 datasets.update(database_data)
 datasets["weather"] = weather_df
 datasets["claims"] = transform_claim_data(datasets["claims"])
-print("\n===== Transformed Claims Dtypes =====")
-print(datasets["claims"].dtypes)
 datasets["payments"] = transform_payment_data(datasets["payments"])
-print("\n===== Transformed Payments Dtypes =====")
-print(datasets["payments"].dtypes)
+datasets["policies"] = transform_policy_data(datasets["policies"])
+datasets["customers"] = transform_customer_data(datasets["customers"])
+print("\n===== Transformed Customers Dtypes =====")
+print(datasets["customers"].dtypes)
 
 for table_name, df in datasets.items():
     if table_name == "weather":
@@ -117,6 +117,31 @@ for table_name, df in datasets.items():
             table_name,
             "payment_date"
         )
+    if table_name == "policies":
+        validate_date_column(
+            df,
+            table_name,
+            "policy_start_date"
+        )
+
+        validate_date_column(
+            df,
+            table_name,
+            "policy_end_date"
+        )
+    if table_name == "customers":
+        validate_date_column(
+            df,
+            table_name,
+            "date_of_birth"
+        ) 
+    if table_name == "branches":
+        validate_date_column(
+            df,
+            table_name,
+         "opening_date"
+        )  
+    
 
 #load
 conn = get_db_connection()

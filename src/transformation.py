@@ -23,3 +23,28 @@ def transform_payment_data(df):
     )
 
     return df
+
+def transform_policy_data(df):
+    df = df.copy()
+
+    df["policy_start_date"] = pd.to_datetime(
+        df["policy_start_date"],
+        errors="coerce"
+    )
+
+    df["policy_end_date"] = pd.to_datetime(
+        df["policy_end_date"],
+        errors="coerce"
+    )
+
+    return df
+
+def transform_customer_data(df):
+    df = df.copy()
+
+    df["date_of_birth"] = pd.to_datetime(
+        df["date_of_birth"],
+        errors="coerce"
+    )
+
+    return df
