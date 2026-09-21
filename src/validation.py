@@ -1,3 +1,5 @@
+import pandas as pd
+
 def validate_weather_data(df):
     if df.empty:
         raise ValueError("Weather DataFrame is empty")              
@@ -22,7 +24,8 @@ def validate_weather_data(df):
     
     return True
     
-def validate_dataframe(df, dataset_name, required_columns):
+def validate_dataframe(df, dataset_name, required_columns, business_key):
+
     if df.empty:
         raise ValueError(f"{dataset_name} DataFrame is empty")
 
@@ -41,7 +44,26 @@ def validate_dataframe(df, dataset_name, required_columns):
             f"{null_counts[null_counts > 0].to_dict()}"
         )
 
+    duplicate_keys = df[df[business_key].duplicated(keep=False)]
+
+    if not duplicate_keys.empty:
+        raise ValueError(
+            f"{dataset_name} contains duplicate {business_key} values"
+        )
+
     if df.duplicated().any():
         raise ValueError(f"{dataset_name} contains duplicate rows")
+
+    return True
+
+def validate_data_types(df, dataset_name, expected_types):
+    for column, expected_type in expected_types.items():
+        if column not in df.columns:
+            continue
+
+        if not expected_type(df[column]):
+            raise ValueError(
+                f"{dataset_name} column '{column}' has incorrect data type"
+            )
 
     return True

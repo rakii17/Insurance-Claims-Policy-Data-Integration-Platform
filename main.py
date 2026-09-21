@@ -5,6 +5,7 @@ from src.extract_excel import extract_excel_data
 from src.extract_database import extract_database_data
 from src.extract_api import get_weather_data
 from src.validation import validate_dataframe
+from src.validation import validate_dataframe, validate_data_types
 
 #extract
 csv_data = extract_csv_data()
@@ -25,6 +26,56 @@ required_columns = {
     "claim_transactions": ["claim_id", "policy_id"]
 }
 
+#businees keys
+business_keys = {
+    "agents": "agent_id",
+    "claims": "claim_id",
+    "customers": "customer_id",
+    "payments": "payment_id",
+    "policies": "policy_id",
+    "branches": "branch_id",
+    "policy_transactions": "transaction_id",
+    "premium_transactions": "payment_id",
+    "claim_transactions": "claim_id"
+}
+
+expected_types = {
+    "agents": {
+        "agent_id": pd.api.types.is_string_dtype,
+        "agent_name": pd.api.types.is_string_dtype,
+    },
+    "claims": {
+        "claim_id": pd.api.types.is_string_dtype,
+        "claim_amount": pd.api.types.is_numeric_dtype,
+    },
+    "customers": {
+        "customer_id": pd.api.types.is_string_dtype,
+        "phone": pd.api.types.is_string_dtype,
+    },
+    "payments": {
+        "payment_id": pd.api.types.is_string_dtype,
+        "payment_amount": pd.api.types.is_numeric_dtype,
+    },
+    "policies": {
+        "policy_id": pd.api.types.is_string_dtype,
+        "premium_amount": pd.api.types.is_numeric_dtype,
+        "sum_insured": pd.api.types.is_numeric_dtype,
+    },
+    "branches": {
+        "branch_id": pd.api.types.is_string_dtype,
+        "employee_count": pd.api.types.is_numeric_dtype,
+    },
+    "policy_transactions": {
+        "transaction_id": pd.api.types.is_string_dtype,
+    },
+    "premium_transactions": {
+        "payment_id": pd.api.types.is_string_dtype,
+    },
+    "claim_transactions": {
+        "claim_id": pd.api.types.is_string_dtype,
+    }
+}
+
 #combine
 datasets = {}
 
@@ -34,14 +85,19 @@ datasets.update(database_data)
 datasets["weather"] = weather_df
 
 for table_name, df in datasets.items():
-
     if table_name == "weather":
         continue
 
     validate_dataframe(
         df,
         table_name,
-        required_columns[table_name]
+        required_columns[table_name],
+        business_keys[table_name]
+    )
+    validate_data_types(
+        df,
+        table_name,
+        expected_types[table_name]
     )
 
 #load
