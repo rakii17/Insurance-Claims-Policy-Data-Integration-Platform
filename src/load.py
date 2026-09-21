@@ -5,4 +5,9 @@ def get_db_connection():
     return conn
 
 def load_to_sqlite(df, table_name, conn):
-    df.to_sql(table_name, conn, if_exists="replace", index=False)
+    try:
+        df.to_sql(table_name, conn, if_exists="replace", index=False)
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e
