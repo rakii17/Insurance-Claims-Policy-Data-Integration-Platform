@@ -189,12 +189,14 @@ try:
 
 except Exception as e:
     conn.rollback()
+    logger.error(f"ETL Pipeline failed during load: {e}")
     raise e
 
 finally:
     conn.close()
 
 logger.info("Data loaded into SQLite successfully")
+logger.info("ETL Pipeline Completed Successfully")
 
 #verify
 conn = get_db_connection()
