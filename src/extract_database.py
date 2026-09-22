@@ -1,7 +1,8 @@
 import sqlite3
 import pandas as pd
+from pathlib import Path
 
-source_db_path = "data/raw/database/source_system.db"
+source_db_path = Path(__file__).resolve().parent.parent / "data" / "raw" / "database" / "source_system.db"
 
 def extract_database_data():
 

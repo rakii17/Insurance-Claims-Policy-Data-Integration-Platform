@@ -1,7 +1,7 @@
 import pandas as pd
 from pathlib import Path
 
-raw_csv_path = Path("data/raw/csv")
+raw_csv_path = Path(__file__).resolve().parent.parent / "data" / "raw" / "csv"
 
 def extract_csv_data():
     csv_data = {}
