@@ -1,11 +1,9 @@
 import pandas as pd
-from pathlib import Path
-
-raw_csv_path = Path(__file__).resolve().parent.parent / "data" / "raw" / "csv"
+from config import RAW_CSV_DIR
 
 def extract_csv_data():
     csv_data = {}
-    csv_files = raw_csv_path.glob("*.csv")
+    csv_files = RAW_CSV_DIR.glob("*.csv")
 
     for file in csv_files:
         df = pd.read_csv(file, dtype={"phone": "string"})

@@ -472,23 +472,14 @@ if __name__ == "__main__":
 # 7  premium_transactions
 # 8    claim_transactions
 # 9               weather
-# agents: 8 rows
-# claims: 3 rows
-# customers: 12 rows
-# payments: 12 rows
-# policies: 12 rows
-# branches: 100 rows
-# policy_transactions: 120 rows
-# premium_transactions: 150 rows
-# claim_transactions: 120 rows
 # weather: 24 rows
 
-# [Done] exited with code=0 in 3.505 seconds
+# [Done] exited with code=0 in 4.763 seconds
 
 # ETL pipeline log:
-# 2026-09-21 13:34:57,605 - INFO - ETL Pipeline Started
-# 2026-09-21 13:34:59,064 - INFO - Data extraction completed successfully
-# 2026-09-21 13:34:59,132 - INFO - Data transformation completed successfully
-# 2026-09-21 13:34:59,175 - INFO - Data validation completed successfully
-# 2026-09-21 13:34:59,460 - INFO - Data loaded into SQLite successfully
-# 2026-09-21 13:34:59,460 - INFO - ETL Pipeline Completed Successfully
+# 2026-09-22 15:15:33,382 - INFO - ETL Pipeline Started
+# 2026-09-22 15:15:35,401 - INFO - Data extraction completed successfully
+# 2026-09-22 15:15:35,484 - INFO - Data transformation completed successfully
+# 2026-09-22 15:15:35,535 - INFO - Data validation completed successfully
+# 2026-09-22 15:15:35,781 - INFO - Data loaded into SQLite successfully
+# 2026-09-22 15:15:35,781 - INFO - ETL Pipeline Completed Successfully
