@@ -1,11 +1,11 @@
 import pandas as pd
 from pathlib import Path
 
-raw_excel_path = Path("data/raw/excel")
-excel_files = raw_excel_path.glob("*.xlsx")    
+raw_excel_path = Path("data/raw/excel")   
     
 def extract_excel_data():
     excel_data = {}
+    excel_files = raw_excel_path.glob("*.xlsx") 
 
     for file in excel_files:
         df = pd.read_excel(file)
