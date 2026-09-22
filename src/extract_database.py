@@ -1,12 +1,10 @@
 import sqlite3
 import pandas as pd
-from pathlib import Path
-
-source_db_path = Path(__file__).resolve().parent.parent / "data" / "raw" / "database" / "source_system.db"
+from config import SOURCE_DB_PATH
 
 def extract_database_data():
 
-    conn = sqlite3.connect(source_db_path)
+    conn = sqlite3.connect(SOURCE_DB_PATH)
 
     policy_transactions_df = pd.read_sql("SELECT * FROM policy_transactions;", conn)
     premium_transactions_df = pd.read_sql("SELECT * FROM premium_transactions;", conn)
