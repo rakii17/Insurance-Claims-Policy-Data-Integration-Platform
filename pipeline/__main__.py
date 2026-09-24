@@ -3,6 +3,7 @@ import sqlite3
 import pandas as pd
 from pathlib import Path
 import hashlib
+import time
 
 def validate_claims(df, conn):
     valid_rows = []
@@ -89,6 +90,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--date", required=True)
 
 args = parser.parse_args()
+start_time = time.time()
 
 # Find input file
 file_path = Path("data/landing") / f"partner_claims_{args.date}.csv"
@@ -105,6 +107,20 @@ print(f"Rows received: {len(df)}")
 # Connect to SQLite
 conn = sqlite3.connect("data/settlement.db")
 
+conn.execute("""
+    CREATE TABLE IF NOT EXISTS pipeline_run_log (
+        run_date TEXT,
+        status TEXT,
+        rows_read INTEGER,
+        rows_loaded INTEGER,
+        rows_rejected INTEGER,
+        start_time REAL,
+        end_time REAL
+    )
+""")
+
+conn.commit()
+
 # Add delivery ID to raw data
 df["delivery_id"] = delivery_id
 
@@ -114,17 +130,38 @@ valid_df, rejected_df = validate_claims(df, conn)
 print(f"Valid rows: {len(valid_df)}")
 print(f"Rejected rows: {len(rejected_df)}")
 
-# Save rejected rows
 if not rejected_df.empty:
-
     rejected_df.to_sql(
         "quarantine_claim_settlement",
         conn,
         if_exists="append",
         index=False
     )
-
     print("Rejected rows moved to quarantine.")
+
+reject_rate = len(rejected_df) / len(df)
+
+print(f"Reject rate: {reject_rate:.2%}")
+
+if reject_rate > 0.20:
+    end_time = time.time()
+
+    conn.execute("""
+        INSERT INTO pipeline_run_log
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (
+        args.date,
+        "FAILED",
+        len(df),
+        len(valid_df),
+        len(rejected_df),
+        start_time,
+        end_time
+    ))
+
+    conn.commit()
+
+    raise ValueError("Reject rate exceeds 20% threshold")
 
 # Create raw table if needed
 df.head(0).to_sql(
@@ -291,8 +328,7 @@ else:
         curated_df = new_data
 
     else:
-        # Remove old version of claims
-        # that are being restated
+        # Remove old version of claims that are being restated
         existing_curated = existing_curated[
             ~existing_curated["claim_id"].isin(
                 new_data["claim_id"]
@@ -319,6 +355,23 @@ else:
     print(
         f"Rows in curated table: {len(curated_df)}"
     )
+    
+end_time = time.time()
+
+conn.execute("""
+    INSERT INTO pipeline_run_log
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (
+    args.date,
+    "SUCCESS",
+    len(df),
+    len(valid_df),
+    len(rejected_df),
+    start_time,
+    end_time
+))
+
+conn.commit()
 
 # Check raw row count
 raw_count = pd.read_sql(
