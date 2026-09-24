@@ -1,0 +1,5 @@
+claim_id,policy_id,settlement_date,settlement_amount,claim_status,currency
+CLM011,POL011,2026-10-01,40000,Approved,INR
+CLM012,POL012,2026-10-01,65000,Settled,INR
+CLM013,POL013,2026-10-01,35000,Approved,INR
+CLM014,POL014,2026-10-01,55000,Settled,INR

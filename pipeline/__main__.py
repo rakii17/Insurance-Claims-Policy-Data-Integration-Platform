@@ -51,7 +51,33 @@ else:
 
     print("New delivery loaded.")
     
-    curated_df = df.drop(columns=["delivery_id"])
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS dim_claim_status (
+    claim_id TEXT,
+    policy_id TEXT,
+    settlement_date TEXT,
+    settlement_amount REAL,
+    claim_status TEXT,
+    currency TEXT,
+    valid_from TEXT,
+    valid_to TEXT
+    )
+    """)
+
+    conn.commit()
+    
+    try:
+        existing_curated = pd.read_sql(
+            "SELECT * FROM fact_claim_settlement",
+            conn
+        )
+    except Exception:
+        existing_curated = pd.DataFrame()
+
+    curated_df = pd.concat(
+        [existing_curated, df.drop(columns=["delivery_id"])],
+        ignore_index=True
+    )
 
     curated_df.to_sql(
         "fact_claim_settlement",

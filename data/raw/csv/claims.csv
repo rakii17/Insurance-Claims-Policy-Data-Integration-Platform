@@ -1,4 +1,0 @@
-claim_id,policy_id,customer_id,claim_date,claim_type,claim_amount,claim_status
-CLM001,POL001,CUST001,2025-06-20,Medical,75000,Approved
-CLM002,POL002,CUST002,2025-07-11,Vehicle,45000,Pending
-CLM003,POL003,CUST003,2025-08-03,Property,120000,Approved
