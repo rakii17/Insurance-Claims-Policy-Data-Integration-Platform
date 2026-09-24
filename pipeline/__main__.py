@@ -36,6 +36,30 @@ df.head(0).to_sql(
     index=False
 )
 
+# Check for schema changes
+existing_columns = pd.read_sql(
+    "PRAGMA table_info(raw_claim_settlement)",
+    conn
+)["name"].tolist()
+
+incoming_columns = df.columns.tolist()
+
+new_columns = [
+    column
+    for column in incoming_columns
+    if column not in existing_columns
+]
+
+if new_columns:
+    print(f"Schema change detected. New columns: {new_columns}")
+
+    for column in new_columns:
+        conn.execute(
+            f'ALTER TABLE raw_claim_settlement ADD COLUMN "{column}" TEXT'
+        )
+
+    conn.commit()
+
 # Check duplicate delivery
 existing_delivery = pd.read_sql(
     "SELECT COUNT(*) AS count FROM raw_claim_settlement WHERE delivery_id = ?",
@@ -90,6 +114,68 @@ else:
         columns=["delivery_id"]
     )
     
+    # Load existing claim history
+    history_df = pd.read_sql(
+        "SELECT * FROM dim_claim_status",
+        conn
+    )
+
+    # Current processing time/date
+    valid_from = args.date
+    
+    # Check for existing versions of incoming claims
+    for _, row in new_data.iterrows():
+
+        existing_history = history_df[
+            history_df["claim_id"] == row["claim_id"]
+        ]
+
+        if existing_history.empty:
+            new_history = pd.DataFrame([{
+                "claim_id": row["claim_id"],
+                "policy_id": row["policy_id"],
+                "settlement_date": row["settlement_date"],
+                "settlement_amount": row["settlement_amount"],
+                "claim_status": row["claim_status"],
+                "currency": row["currency"],
+                "valid_from": valid_from,
+                "valid_to": None
+            }])
+
+            history_df = pd.concat(
+                [history_df, new_history],
+                ignore_index=True
+            )
+
+        else:
+            history_df.loc[
+                history_df["claim_id"] == row["claim_id"],
+                "valid_to"
+            ] = valid_from
+
+            new_history = pd.DataFrame([{
+                "claim_id": row["claim_id"],
+                "policy_id": row["policy_id"],
+                "settlement_date": row["settlement_date"],
+                "settlement_amount": row["settlement_amount"],
+                "claim_status": row["claim_status"],
+                "currency": row["currency"],
+                "valid_from": valid_from,
+                "valid_to": None
+            }])
+
+            history_df = pd.concat(
+                [history_df, new_history],
+                ignore_index=True
+            )
+
+    history_df.to_sql(
+        "dim_claim_status",
+        conn,
+        if_exists="replace",
+        index=False
+    )
+    
     # Build curated table
     if existing_curated is None:
         curated_df = new_data
@@ -113,7 +199,6 @@ else:
         )
 
     # Save curated data
-
     curated_df.to_sql(
         "fact_claim_settlement",
         conn,

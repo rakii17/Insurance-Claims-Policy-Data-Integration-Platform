@@ -1,0 +1,3 @@
+claim_id,policy_id,settlement_date,settlement_amount,claim_status,currency,settlement_channel
+CLM015,POL015,2026-10-05,48000,Approved,INR,NEFT
+CLM016,POL016,2026-10-05,72000,Settled,INR,UPI
