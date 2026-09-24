@@ -4,6 +4,86 @@ import pandas as pd
 from pathlib import Path
 import hashlib
 
+def validate_claims(df, conn):
+    valid_rows = []
+    rejected_rows = []
+
+    # Get known policy IDs
+    policies = [
+    "POL001",
+    "POL002",
+    "POL003",
+    "POL004",
+    "POL005",
+    "POL006",
+    "POL007",
+    "POL008",
+    "POL009",
+    "POL010",
+    "POL011",
+    "POL012",
+    "POL013",
+    "POL014",
+    "POL015",
+    "POL016",
+    "POL017",
+    "POL018",
+    "POL019",
+    "POL020",
+    "POL021",
+    "POL022",
+    "POL023",
+    "POL024",
+    "POL025",
+    "POL026",
+    "POL027",
+    "POL028",
+    "POL029",
+    "POL030"
+    ]
+
+    seen_claims = set()
+
+    for _, row in df.iterrows():
+
+        reason = None
+
+        # Negative amount
+        if row["settlement_amount"] < 0:
+            reason = "NEGATIVE_SETTLEMENT_AMOUNT"
+
+        # Invalid date
+        elif pd.isna(
+            pd.to_datetime(
+                row["settlement_date"],
+                errors="coerce"
+            )
+        ):
+            reason = "INVALID_SETTLEMENT_DATE"
+
+        # Unknown policy
+        elif row["policy_id"] not in policies:
+            reason = "UNKNOWN_POLICY_ID"
+
+        # Duplicate claim within file
+        elif row["claim_id"] in seen_claims:
+            reason = "DUPLICATE_CLAIM_ID"
+
+        if reason:
+            rejected_rows.append({
+                **row.to_dict(),
+                "rejection_reason": reason
+            })
+        else:
+            valid_rows.append(row.to_dict())
+
+        seen_claims.add(row["claim_id"])
+
+    return (
+        pd.DataFrame(valid_rows),
+        pd.DataFrame(rejected_rows)
+    )
+
 # Read command-line date
 parser = argparse.ArgumentParser()
 parser.add_argument("--date", required=True)
@@ -28,6 +108,24 @@ conn = sqlite3.connect("data/settlement.db")
 # Add delivery ID to raw data
 df["delivery_id"] = delivery_id
 
+# Validate incoming records
+valid_df, rejected_df = validate_claims(df, conn)
+
+print(f"Valid rows: {len(valid_df)}")
+print(f"Rejected rows: {len(rejected_df)}")
+
+# Save rejected rows
+if not rejected_df.empty:
+
+    rejected_df.to_sql(
+        "quarantine_claim_settlement",
+        conn,
+        if_exists="append",
+        index=False
+    )
+
+    print("Rejected rows moved to quarantine.")
+
 # Create raw table if needed
 df.head(0).to_sql(
     "raw_claim_settlement",
@@ -41,6 +139,19 @@ existing_columns = pd.read_sql(
     "PRAGMA table_info(raw_claim_settlement)",
     conn
 )["name"].tolist()
+
+incoming_columns = df.columns.tolist()
+
+# Handle renamed columns
+rename_map = {
+    "status": "claim_status"
+}
+
+for old_name, new_name in rename_map.items():
+    if old_name in incoming_columns and new_name not in incoming_columns:
+        df.rename(columns={old_name: new_name}, inplace=True)
+
+print(f"Columns after schema handling: {df.columns.tolist()}")
 
 incoming_columns = df.columns.tolist()
 
@@ -70,7 +181,6 @@ existing_delivery = pd.read_sql(
 
 if existing_delivery > 0:
     print("Delivery already processed. Skipping load.")
-
 
 else:
     # Load raw records
